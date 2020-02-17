@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import './App.css';
-
+import luhnCheck from './logics/luhnCheck';
 class App extends Component {
   
   constructor(){
@@ -9,7 +9,8 @@ class App extends Component {
       cardNumbers: '',
       numbers: [],
       valid: '',
-      cardName: 'test'
+      cardName: '',
+      validity: false
      
     }
     this.changeHandler = this.changeHandler.bind(this);
@@ -28,17 +29,14 @@ class App extends Component {
 
   submitHandler = (e) => {
     e.preventDefault();
-   this.luhnCheck(this.state.cardNumbers)
-   if ( this.luhnCheck(this.state.cardNumbers)){
+    let cardNum = this.state.cardNumbers.replace(/\s+/g, '')
+   luhnCheck(cardNum)
+   if ( luhnCheck(cardNum)){
      this.setState({
-       valid: "Card number is valid"
-      })} else {
-        this.setState({
-          valid: "Card is not valid"
-        })
-      }
-      
-      let num = this.state.cardNumbers;
+       valid: "Card number is valid",
+       validity: true
+      })
+     let num = this.state.cardNumbers;
 
       if(num.charAt(0) === '4'){
         this.setState({
@@ -56,45 +54,37 @@ class App extends Component {
             this.setState({
               cardName: ''
             })
-          }
-    console.log(this.state.cardNumbers, this.state.numbers,  this.luhnCheck(this.state.cardNumbers), this.state.cardName)
+          }} else {
+        this.setState({
+          valid: "Card number is not valid",
+          validity: false
+        });
+        if (this.state.validity === true){
+          this.setState({
+            cardName: ''
+          })
+        }
+      }  
+
+
+      
+     
+    console.log(this.state.cardNumbers, this.state.numbers,  luhnCheck(this.state.cardNumbers), this.state.cardName)
   }
 
-luhnCheck = num => {
-    let arr = (num + '')
-      .split('')
-      .reverse()
-      .map(x => parseInt(x));
-    let lastDigit = arr.splice(0, 1)[0];
-    let sum = arr.reduce((acc, val, i) => (i % 2 !== 0 ? acc + val : acc + ((val * 2) % 9) || 9), 0);
-    sum += lastDigit;
+// luhnCheck = num => {
+//     let arr = (num + '')
+//       .split('')
+//       .reverse()
+//       .map(x => parseInt(x));
+//     let lastDigit = arr.splice(0, 1)[0];
+//     let sum = arr.reduce((acc, val, i) => (i % 2 !== 0 ? acc + val : acc + ((val * 2) % 9) || 9), 0);
+//     sum += lastDigit;
 
-    return sum % 10 === 0;
+//     return sum % 10 === 0;
 
-  };
-  // cardType = (val) => {
-  //   let num = val.split('')
-
-    // if(num[0] === 4){
-    //   this.setState({
-    //     cardName: 'Visa'
-    //   }) } else if(num[0] === 5){
-    //     this.setState({
-    //       cardName: 'Mastercard'
-    //     })
-    //   } else if (num[0] === 3){
-    //     if(num[1] === 4 || num[1] === 7){
-    //       this.setState({
-    //         cardName: 'American Express'
-    //       })
-    //     }} else {
-    //       this.setState({
-    //         cardName: ''
-    //       })
-    //     }
-      
-    
-  // }
+//   };
+  
 
   render(){
   return (
@@ -103,10 +93,9 @@ luhnCheck = num => {
       <h3>Card Validator</h3>
       <div className="form-input">
         <input type="text" value={this.state.cardNumbers} onChange={this.changeHandler}/>
-        <input type="submit" value="submit" onClick={this.submitHandler}/>
+        <input type="submit" value="Check" onClick={this.submitHandler}/>
 
-        <h3>{this.state.valid
-    }</h3>
+        <h3>{this.state.valid}</h3>
     <p>{this.state.cardName}</p>
 
   
