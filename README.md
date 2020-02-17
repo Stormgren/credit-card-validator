@@ -1,3 +1,5 @@
+This is a credit card validator made with React. Upon entering credit card number it returns validity of that card using Luhn's algorithm. If the card is valid, input may also returns card type if it is American Express, Visa, or Mastercard. It has been tested and works with card numbers from simplify: https://www.simplify.com/commerce/docs/testing/test-card-numbers
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
