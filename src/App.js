@@ -1,80 +1,97 @@
-import React, {Component} from 'react';
-import './App.css';
+import React, { Component } from "react";
+import "./App.css";
+import luhnCheck from "./Luhn/luhnCheck";
 
 class App extends Component {
-  
-  constructor(){
+
+  constructor() {
     super();
     this.state = {
-      cardNumbers: '',
-      numbers: [],
-      valid: ''
-     
-    }
+      cardNumbers: "",
+      valid: "",
+      cardName: "",
+      validity: false
+    };
     this.changeHandler = this.changeHandler.bind(this);
   }
 
   changeHandler = (e) => {
-    e.preventDefault();
     this.setState({
-      cardNumbers: e.target.value,
-      numbers: this.state.cardNumbers.split('')
+      cardNumbers: e.target.value
     });
-    
-    console.log(this.state.cardNumbers, this.state.numbers)
-  }
+  };
 
   submitHandler = (e) => {
     e.preventDefault();
-   this.luhnCheck(this.state.cardNumbers)
-    
-   if ( this.luhnCheck(this.state.cardNumbers)){
-     this.setState({
-       valid: "Card number is valid"
-     })} else {
-       this.setState({
-         valid: "Card is not valid"
-       })
-     }
-   
-    console.log(this.state.cardNumbers, this.state.numbers,  this.luhnCheck(this.state.cardNumbers), this.state.valid)
-  }
 
-luhnCheck = num => {
-    let arr = (num + '')
-      .split('')
-      .reverse()
-      .map(x => parseInt(x));
-    let lastDigit = arr.splice(0, 1)[0];
-    let sum = arr.reduce((acc, val, i) => (i % 2 !== 0 ? acc + val : acc + ((val * 2) % 9) || 9), 0);
-    sum += lastDigit;
+    //remove spacing between characters
+    let cardNum = this.state.cardNumbers.replace(/\s+/g, "");
 
-    if (arr[0] === 3 && arr[1] === 4 || arr[1] === 7 ){
-      console.log("American Express")
+    luhnCheck(cardNum);
+
+    if (luhnCheck(cardNum)) {
+      this.setState({
+        valid: "Valid",
+        validity: true
+      });
+
+      let num = this.state.cardNumbers;
+
+      if (num.charAt(0) === "4") {
+        this.setState({
+          cardName: "Visa"
+        });
+      } else if (num.charAt(0) === "5") {
+        this.setState({
+          cardName: "Mastercard"
+        });
+      } else if (num.charAt(0) === "3") {
+        if (num.charAt(1) === "4" || num.charAt(1) === "7") {
+          this.setState({
+            cardName: "American Express"
+          });
+        }
+      } else {
+        this.setState({
+          cardName: ""
+        });
+      }
+    } else {
+      this.setState({
+        valid: "Not valid",
+        validity: false
+      });
+
+      //Makes card name disappear if invalid number is inserted after valid number
+      if (this.state.validity === true) {  
+        this.setState({
+          cardName: ""
+        });
+      }
     }
-    return sum % 10 === 0;
-
   };
 
-  render(){
-  return (
-    <div className="App">
-      <header className="App-header">
-      <h3>Card Validator</h3>
-      <div className="form-input">
-        <input type="text" value={this.state.cardNumbers} onChange={this.changeHandler}/>
-        <input type="submit" value="submit" onClick={this.submitHandler}/>
+  render() {
+    return (
+      <div className="app">
+     
+          <h3>Card Validator</h3>
+          <div className="form-input">
+            <label>Insert credit card number: </label><br/>
+            <input
+              type="text"
+              value={this.state.cardNumbers}
+              onChange={this.changeHandler}
+            />
+            <input type="submit" value="Check" className="submit-btn" onClick={this.submitHandler} />
 
-        <h3>{this.state.valid
-    }</h3>
-
-  
+    <p className={this.state.validity ? 'confirmation green' : 'confirmation red'}>{this.state.valid.toUpperCase()}</p>
+            <p>{this.state.cardName}</p>
+          </div>
       
-        </div>
-      </header>
-    </div>
-  );
-}
+      </div>
+    );
+  }
 }
 
 export default App;
