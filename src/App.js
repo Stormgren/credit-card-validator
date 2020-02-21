@@ -24,38 +24,32 @@ class App extends Component {
   submitHandler = (e) => {
     e.preventDefault();
 
-    //remove spacing between characters
-    let cardNum = this.state.cardNumbers.replace(/\s+/g, "");
+    //Remove spacing between characters
+    let cardNum = this.state.cardNumbers.replace(/\D+/g, "");
 
-    luhnCheck(cardNum);
 
     if (luhnCheck(cardNum)) {
-      this.setState({
-        valid: "Valid",
-        validity: true
-      });
 
       let num = this.state.cardNumbers;
-
+      let card = "";
       if (num.charAt(0) === "4") {
-        this.setState({
-          cardName: "Visa"
-        });
+        card = "Visa"
       } else if (num.charAt(0) === "5") {
-        this.setState({
-          cardName: "Mastercard"
-        });
+        card = "Mastercard"
       } else if (num.charAt(0) === "3") {
         if (num.charAt(1) === "4" || num.charAt(1) === "7") {
-          this.setState({
-            cardName: "American Express"
-          });
+         card = "American Express"
         }
       } else {
-        this.setState({
-          cardName: ""
-        });
+        card = ""
       }
+    
+      this.setState({
+        valid: "Valid",
+        validity: true,
+        cardName: card
+      });
+      
     } else {
       this.setState({
         valid: "Not valid",
