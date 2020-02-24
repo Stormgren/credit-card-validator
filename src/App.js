@@ -71,14 +71,16 @@ class App extends Component {
      
           <h3>Card Validator</h3>
           <div className="form-input">
+           <form  onSubmit={this.submitHandler}>
             <label>Insert credit card number: </label><br/>
             <input
               type="text"
               value={this.state.cardNumbers}
               onChange={this.changeHandler}
+              
             />
-            <input type="submit" value="Check" className="submit-btn" onClick={this.submitHandler} />
-
+            <input type="submit" value="Check" className="submit-btn" />
+            </form>
     <p className={this.state.validity ? 'confirmation green' : 'confirmation red'}>{this.state.valid.toUpperCase()}</p>
             <p>{this.state.cardName}</p>
           </div>
